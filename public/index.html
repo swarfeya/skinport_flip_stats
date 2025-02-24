@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="index.js"></script>
+</head>
+<body>
+    <div id="normal_stats"></div>
+    <p id="warning" style="display: none; color: red">Last refresh time is over 12 hours ago! Information is possibly wrong!</p>
+    <button onclick="fetchApiInfo()">Refresh info</button>
+    <input placeholder="clientId" id="clientId" type="password">
+    <input placeholder="api_secret" id="api_secret" type="password">
+    <a href="https://skinport.com/de/account" target="_blank">Find API Info</a>
+    <ul id="total_stats">
+        <li id="items_bought"></li>
+        <li id="items_sold"></li>
+        <li id="money_bought"></li>
+        <li id="money_sold"></li>
+        <li id="money_sold_after_fee"></li>
+        <li id="profit_after_fee"></li>
+    </ul>
+    <ul id="purchase_list"></ul>
+        <!-- <li class="purchase profitable">
+            <span class="purchase_info">Item Name: AK-47 | Buy Price: $100</span>
+            <span class="sell_info">Sell Price: $150 | Profit: $50</span>
+        </li>
+        <li class="purchase not_profitable">
+            <span class="purchase_info">Item Name: M4A1-S | Buy Price: $200</span>
+            <span class="sell_info">Sell Price: $180 | Profit: -$20</span>
+        </li> -->
+    </ul>
+
+    <style>
+        .purchase {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        .profitable {
+            background-color: lightgreen;
+        }
+        .not_profitable {
+            background-color: lightcoral;
+        }
+        .not_sold {
+            background-color: lightgray;
+        }
+    </style>
+</body>
+</html>
