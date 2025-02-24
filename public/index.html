@@ -9,9 +9,14 @@
 <body>
     <div id="normal_stats"></div>
     <p id="warning" style="display: none; color: red">Last refresh time is over 12 hours ago! Information is possibly wrong!</p>
-    <button onclick="fetchApiInfo()">Refresh info</button>
-    <input placeholder="clientId" id="clientId" type="password">
-    <input placeholder="api_secret" id="api_secret" type="password">
+    <form id="form" onsubmit="return false;">
+        <input placeholder="clientId" id="clientId">
+        <input placeholder="api_secret" id="api_secret" type="password" onsubmit="fetchApiInfo()">
+        <button onclick="fetchApiInfo()">Refresh info</button>
+        <!-- <input style="position:absolute; top:80%; left:5%; width:40%;" type="text" id="userInput" />
+        -->
+        <!-- <input style="position:absolute; top:50%; left:5%; width:40%;" type="submit" onclick="fetchApiInfo();" />  -->
+    </form>
     <a href="https://skinport.com/de/account" target="_blank">Find API Info</a>
     <ul id="total_stats">
         <li id="items_bought"></li>

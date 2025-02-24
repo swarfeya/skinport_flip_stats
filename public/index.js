@@ -52,8 +52,8 @@ function clampPrice(price) {
 }
 
 async function getPage(page, limit=100) {
-    let clientId = document.querySelector(".clientId").innerText;
-    let secret = document.querySelector(".api_secret").innerText;
+    let clientId = document.querySelector("#clientId").value;
+    let secret = document.querySelector("#api_secret").value;
     const params = new URLSearchParams({
         clientId,
         secret,
@@ -75,6 +75,10 @@ async function getPage(page, limit=100) {
 
 async function fetchApiInfo() {
     let item_amount_info = await getPage(1, 1);
+    if (item_amount_info.errors && item_amount_info.errors.length) {
+        alert(item_amount_info.errors.map(a => a.message).join("\n"))
+        return;
+    } 
     item_amount_info.fetchTime = new Date().getTime();
     window.localStorage.setItem("amount_info", JSON.stringify(item_amount_info));
     infos = []
@@ -84,6 +88,7 @@ async function fetchApiInfo() {
         infos.push(...info.data)
     }
     window.localStorage.setItem("api_info", JSON.stringify(infos))
+    alert("Successfully reloaded the list!")
 }
 
 
