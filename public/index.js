@@ -94,7 +94,7 @@ async function fetchApiInfo() {
 
 
 /** @param {Item} item_purchase  */
-function getDOMElementPurchase(item_purchase) {
+function getDOMElementPurchase(item_purchase, index) {
     /**
      * @type {Purchase[]}
      */
@@ -121,6 +121,7 @@ function getDOMElementPurchase(item_purchase) {
     let sellItem = itemlist.find(item => item.asset_id == item_purchase.asset_id && item.type == "credit");
     const sellInfo = document.createElement('span');
     sellInfo.className = 'sell_info';
+    let profit;
     if (sellItem != undefined) {
         // itemlist = itemlist.filter(a => a.sale_id != sellItem.sale_id)
         let sellCurrency;
@@ -132,7 +133,7 @@ function getDOMElementPurchase(item_purchase) {
             sellCurrency = sellItem.currency;
 
         const sellPrice = sellItem.amount; // Example calculation for sell price
-        const profit = clampPrice(sellPrice - sellItem.fee - item_purchase.amount);
+        profit = clampPrice(sellPrice - sellItem.fee - item_purchase.amount);
         console.log(sellPrice, sellItem.fee, item_purchase.amount, profit);
         // sellInfo.textContent = `Sell Price: $${sellPrice} | Profit: $${profit}`;
         sellInfo.textContent = `Sell Price: ${sellCurrency}${sellPrice} | Fee ${sellCurrency}${sellItem.fee} | Profit: ${sellCurrency}${profit}`;
@@ -148,6 +149,9 @@ function getDOMElementPurchase(item_purchase) {
 
     li.appendChild(purchaseInfo);
     li.appendChild(sellInfo);
+    li.setAttribute("data-buyprice", item_purchase.amount);
+    li.setAttribute("data-index", index);
+    li.setAttribute("data-profit", profit);
 
     return li;
     // purchase[0].
@@ -159,7 +163,6 @@ function sum(list) {
     return _sum;
 }
 
-// TODO: save stuff in cookies; then add flip statistics. check if the same item has been bought
 window.onload = async () => {
     // calculate the total stats
     const itemsBought = itemlist.filter(a => a.type == "purchase");
@@ -177,10 +180,11 @@ window.onload = async () => {
     document.getElementById("profit_after_fee").innerText = `Profit after fees: ${profitAfterFee}`;
 
     console.log(itemlist)
-    for (let item of itemlist) {
+    for (let index = 0; index < itemlist.length; index++) {
+        let item = itemlist[index];
         if (item.type != "purchase") 
             continue;
-        let dom_element = getDOMElementPurchase(item);
+        let dom_element = getDOMElementPurchase(item, index);
         if (dom_element == undefined) {
             console.log(item)
             continue;
@@ -198,3 +202,5 @@ window.onload = async () => {
     }
     console.log(timeDiff)
 }
+
+// TODO: add filters to view the total stats, like ignore not sold
