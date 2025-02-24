@@ -26,6 +26,16 @@
         <li id="money_sold_after_fee"></li>
         <li id="profit_after_fee"></li>
     </ul>
+
+    <div style="display: flex; justify-content: flex-end;">
+    <label style="padding-right: 1%;">Sort by:  </label>
+        <select id="sort_by" value="Time" onchange="resort()">
+            <option value="Time">Time</option>
+            <option value="Buy price">Buy price</option>
+            <option value="Sell price">Sell price</option>
+            <option value="Profit">Profit</option>
+        </select>
+    </div>
     <ul id="purchase_list"></ul>
         <!-- <li class="purchase profitable">
             <span class="purchase_info">Item Name: AK-47 | Buy Price: $100</span>

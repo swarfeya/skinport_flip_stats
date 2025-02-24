@@ -121,7 +121,8 @@ function getDOMElementPurchase(item_purchase, index) {
     let sellItem = itemlist.find(item => item.asset_id == item_purchase.asset_id && item.type == "credit");
     const sellInfo = document.createElement('span');
     sellInfo.className = 'sell_info';
-    let profit;
+    let profit = 0;
+    let sellPrice = 0;
     if (sellItem != undefined) {
         // itemlist = itemlist.filter(a => a.sale_id != sellItem.sale_id)
         let sellCurrency;
@@ -132,7 +133,7 @@ function getDOMElementPurchase(item_purchase, index) {
         else 
             sellCurrency = sellItem.currency;
 
-        const sellPrice = sellItem.amount; // Example calculation for sell price
+        sellPrice = sellItem.amount; // Example calculation for sell price
         profit = clampPrice(sellPrice - sellItem.fee - item_purchase.amount);
         console.log(sellPrice, sellItem.fee, item_purchase.amount, profit);
         // sellInfo.textContent = `Sell Price: $${sellPrice} | Profit: $${profit}`;
@@ -142,6 +143,7 @@ function getDOMElementPurchase(item_purchase, index) {
         } else {
             li.className = "purchase not_profitable"    
         }
+        
     } else {
         sellInfo.textContent = `Sell Price: Not sold! | Profit: None`;
         li.className = "purchase not_sold"    
@@ -152,6 +154,7 @@ function getDOMElementPurchase(item_purchase, index) {
     li.setAttribute("data-buyprice", item_purchase.amount);
     li.setAttribute("data-index", index);
     li.setAttribute("data-profit", profit);
+    li.setAttribute("data-sellprice", sellPrice);
 
     return li;
     // purchase[0].
@@ -191,6 +194,7 @@ window.onload = async () => {
         }
         document.getElementById("purchase_list").appendChild(dom_element)
     }
+    resort();
 
     
 
@@ -201,6 +205,38 @@ window.onload = async () => {
         document.getElementById("warning").style.display = "block"; 
     }
     console.log(timeDiff)
+}
+
+
+// table to translate the sort_by value to data-___
+const sort_by_table = {
+    "Time": "data-index",
+    "Buy price": "data-buyprice",
+    "Sell price": "data-sellprice",
+    "Profit": "data-profit",
+}
+function resort() {
+    let sort_by = sort_by_table[document.getElementById("sort_by").value];
+    console.log("hi!, sortby: ",sort_by)
+    let children = Array.from(document.getElementById("purchase_list").children);
+    document.getElementById("purchase_list").innerHTML = "";
+
+    // sort the children array by sort_by_table attribute
+    for (let i = 0; i < children.length; i++) {
+        for (let j = i; j < children.length; j++) {
+            let el_left = children[i].getAttribute(sort_by);
+            let el_right = children[j].getAttribute(sort_by);
+
+            if (parseFloat(el_right) > parseFloat(el_left)) {
+                let tmp = children[j];
+                children[j] = children[i];
+                children[i] = tmp;
+            }
+        }
+    }
+    // then add it back to the DOM
+    children.forEach(child => document.getElementById("purchase_list").appendChild(child))
+
 }
 
 // TODO: add filters to view the total stats, like ignore not sold
