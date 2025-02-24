@@ -10,3 +10,7 @@ Finally, you can access it through http://localhost:3000.
 Enter your Client-ID and API-Key from skinport to the site and click the "Refresh info" button. 
 The pair can be found on https://skinport.com/en/account:
 ![where to find it in skinport settings](https://github.com/user-attachments/assets/1a1b5761-b34e-47f8-8db3-64ca04471667)
+
+
+# Screenshot of the page
+![grafik](https://github.com/user-attachments/assets/91b83a7a-2ec4-4fdb-9921-2fc989de08ce)
