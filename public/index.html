@@ -8,7 +8,8 @@
 </head>
 <body>
     <div id="normal_stats"></div>
-    <p id="warning" style="display: none; color: red">Last refresh time is over 12 hours ago! Information is possibly wrong!</p>
+    <p id="warning" style="display: none; color: red">Last refresh time is over 12 hours ago! Information is possibly outdated!</p>
+    <p id="warning_not_logged_in" style="display: none; color: red">Refresh the information first to view your stats.</p>
     <form id="form" onsubmit="return false;">
         <input placeholder="clientId" id="clientId">
         <input placeholder="api_secret" id="api_secret" type="password" onsubmit="fetchApiInfo()">
@@ -35,6 +36,9 @@
             <option value="Sell price">Sell price</option>
             <option value="Profit">Profit</option>
         </select>
+        <label style="padding-left: 2%; padding-right: 1%;">Hide not sold: </label>
+        <input type="checkbox" id="hide_not_sold_check" onchange="loadHideNotSold()" checked>
+    
     </div>
     <ul id="purchase_list"></ul>
         <!-- <li class="purchase profitable">

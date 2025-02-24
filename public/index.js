@@ -23,6 +23,7 @@
  * @property {string} seller_country - The country of the seller.
  */
 
+let HideNotSold = true;
 
 
 let infos = JSON.parse(window.localStorage.getItem("api_info"));
@@ -30,23 +31,33 @@ let infos = JSON.parse(window.localStorage.getItem("api_info"));
 /**
  * @type {Item[]}
  */
-let itemlist = infos.filter(a => a.status == "complete" && a.items).map(purchase => {
-    let feePercentage;
-    if (purchase.type == "credit") {
-        feePercentage = purchase.fee / purchase.amount;
-        if (feePercentage > 0.11 && feePercentage < 0.13) {
-            feePercentage = 0.12;
-        }
-    }
-    purchase.items.forEach(purchased_item => {
+let itemlist;
+function loadVariables() {
+    itemlist = infos.filter(a => a.status == "complete" && a.items).map(purchase => {
+        let feePercentage;
         if (purchase.type == "credit") {
-            purchased_item.fee = clampPrice(purchased_item.amount*feePercentage);
+            feePercentage = purchase.fee / purchase.amount;
+            if (feePercentage > 0.11 && feePercentage < 0.13) {
+                feePercentage = 0.12;
+            }
         }
-        purchased_item.type = purchase.type
-    });
-    return purchase.items;
-}).flat();
-
+        purchase.items.forEach(purchased_item => {
+            if (purchase.type == "credit") {
+                purchased_item.fee = clampPrice(purchased_item.amount*feePercentage);
+            }
+            purchased_item.type = purchase.type
+        });
+        return purchase.items;
+    }).flat();
+    filtered_itemlist = itemlist.filter(item => {
+        if (HideNotSold && item.type == "purchase") {
+            if (itemlist.find(a => a.type == "credit" && a.asset_id == item.asset_id) == undefined)
+                return false;
+        }
+        return true;
+    });    
+}
+let filtered_itemlist;
 function clampPrice(price) {
     return Math.ceil(price*100)/100;
 }
@@ -89,6 +100,8 @@ async function fetchApiInfo() {
     }
     window.localStorage.setItem("api_info", JSON.stringify(infos))
     alert("Successfully reloaded the list!")
+    loadVariables();
+    window.onload();
 }
 
 
@@ -112,7 +125,6 @@ function getDOMElementPurchase(item_purchase, index) {
     */
     const li = document.createElement('li');
     // li.className = purchase.amount > 0 ? 'purchase profitable' : 'purchase not_profitable';
-
     const purchaseInfo = document.createElement('span');
     purchaseInfo.className = 'purchase_info';
     purchaseInfo.textContent = `Item Name: ${item_purchase.market_hash_name} | Buy Price: $${item_purchase.amount}`;
@@ -166,21 +178,17 @@ function sum(list) {
     return _sum;
 }
 
+
 window.onload = async () => {
     // calculate the total stats
-    const itemsBought = itemlist.filter(a => a.type == "purchase");
-    const itemsSold = itemlist.filter(a => a.type == "credit");
-    const moneyBought = clampPrice(sum(itemsBought.map(a => a.amount)));
-    const moneySold = clampPrice(sum(itemsSold.map(a => a.amount)));
-    const moneySoldAfterFee = clampPrice(sum(itemsSold.map(a => a.amount - a.fee)));
-    const profitAfterFee = moneySoldAfterFee - moneyBought;
+    if (infos == null) {
+        document.getElementById("warning_not_logged_in").style.display = "";
+        return;
+    } else {
+        document.getElementById("warning_not_logged_in").style.display = "none";
 
-    document.getElementById("items_bought").innerText = `Items bought: ${itemsBought.length}`;
-    document.getElementById("items_sold").innerText = `Items sold: ${itemsSold.length}`;
-    document.getElementById("money_bought").innerText = `Money spent: ${moneyBought}`;
-    document.getElementById("money_sold").innerText = `Money sold: ${moneySold}`;
-    document.getElementById("money_sold_after_fee").innerText = `Money sold after fees: ${moneySoldAfterFee}`;
-    document.getElementById("profit_after_fee").innerText = `Profit after fees: ${profitAfterFee}`;
+    }
+    loadHideNotSold()
 
     console.log(itemlist)
     for (let index = 0; index < itemlist.length; index++) {
@@ -217,7 +225,6 @@ const sort_by_table = {
 }
 function resort() {
     let sort_by = sort_by_table[document.getElementById("sort_by").value];
-    console.log("hi!, sortby: ",sort_by)
     let children = Array.from(document.getElementById("purchase_list").children);
     document.getElementById("purchase_list").innerHTML = "";
 
@@ -235,8 +242,41 @@ function resort() {
         }
     }
     // then add it back to the DOM
-    children.forEach(child => document.getElementById("purchase_list").appendChild(child))
+    children.forEach(child => {
+        if (HideNotSold && child.getAttribute("data-sellprice") == "0") {
+            child.style.display = "none";
+        } else {
+            child.style.display = "";
 
+        }
+        document.getElementById("purchase_list").appendChild(child);
+    })
+
+}
+
+
+function loadTotalStats() {
+    const itemsBought = filtered_itemlist.filter(a => a.type == "purchase");
+    const itemsSold = filtered_itemlist.filter(a => a.type == "credit");
+    const moneyBought = clampPrice(sum(itemsBought.map(a => a.amount)));
+    const moneySold = clampPrice(sum(itemsSold.map(a => a.amount)));
+    const moneySoldAfterFee = clampPrice(sum(itemsSold.map(a => a.amount - a.fee)));
+    const profitAfterFee = moneySoldAfterFee - moneyBought;
+
+    document.getElementById("items_bought").innerText = `Items bought: ${itemsBought.length}`;
+    document.getElementById("items_sold").innerText = `Items sold: ${itemsSold.length}`;
+    document.getElementById("money_bought").innerText = `Money spent: ${moneyBought}`;
+    document.getElementById("money_sold").innerText = `Money sold: ${moneySold}`;
+    document.getElementById("money_sold_after_fee").innerText = `Money sold after fees: ${moneySoldAfterFee}`;
+    document.getElementById("profit_after_fee").innerText = `Profit after fees: ${profitAfterFee}`;
+
+}
+
+function loadHideNotSold() {
+    HideNotSold = document.getElementById("hide_not_sold_check").checked;
+    loadVariables();
+    loadTotalStats();
+    resort();
 }
 
 // TODO: add filters to view the total stats, like ignore not sold
