@@ -127,7 +127,8 @@ function getDOMElementPurchase(item_purchase, index) {
     // li.className = purchase.amount > 0 ? 'purchase profitable' : 'purchase not_profitable';
     const purchaseInfo = document.createElement('span');
     purchaseInfo.className = 'purchase_info';
-    purchaseInfo.textContent = `Item Name: ${item_purchase.market_hash_name} | Buy Price: $${item_purchase.amount}`;
+    let buyCurrency = getCurrencySymbol(item_purchase);
+    purchaseInfo.textContent = `Item Name: ${item_purchase.market_hash_name} | Buy Price: ${buyCurrency}${item_purchase.amount}`;
 
     // infos.find(a => a.)
     let sellItem = itemlist.find(item => item.asset_id == item_purchase.asset_id && item.type == "credit");
@@ -138,12 +139,7 @@ function getDOMElementPurchase(item_purchase, index) {
     if (sellItem != undefined) {
         // itemlist = itemlist.filter(a => a.sale_id != sellItem.sale_id)
         let sellCurrency;
-        if (sellItem.currency == "EUR")
-            sellCurrency = "€";
-        else if (sellItem.currency == "USD")
-            sellCurrency = "$";
-        else 
-            sellCurrency = sellItem.currency;
+        sellCurrency = getCurrencySymbol(sellItem);
 
         sellPrice = sellItem.amount; // Example calculation for sell price
         profit = clampPrice(sellPrice - sellItem.fee - item_purchase.amount);
@@ -171,6 +167,17 @@ function getDOMElementPurchase(item_purchase, index) {
     return li;
     // purchase[0].
 }
+function getCurrencySymbol(sellItem) {
+    let sellCurrency;
+    if (sellItem.currency == "EUR")
+        sellCurrency = "€";
+    else if (sellItem.currency == "USD")
+        sellCurrency = "$";
+    else
+        sellCurrency = sellItem.currency;
+    return sellCurrency;
+}
+
 function sum(list) {
     let _sum = 0;
     for (let item of list)
