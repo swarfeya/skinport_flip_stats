@@ -1,5 +1,6 @@
 # Skinport Flipping Stats
-Website to view a list of your skinport transactions & the price they were sold for (if they were also sold on skinport).
+Website to view a list of your skinport transactions & the price you sold them for after (in case you also sold them on skinport).
+
 
 # How to set up
 Requires nodejs to be installed.
