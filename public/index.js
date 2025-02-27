@@ -71,7 +71,7 @@ async function getPage(page, limit=100) {
         page,
         limit
     });
-    const response = await fetch(`${document.location}/transactions?${params}`, {
+    const response = await fetch(`${document.location}transactions?${params}`, {
         method: 'GET',
         headers: {
             'Accept-Encoding': 'br'
