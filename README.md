@@ -5,7 +5,7 @@ Website to view a list of your skinport transactions & the price you sold them f
 # How to set up
 Requires nodejs to be installed.
 Run `npm install` in the workspace to get the packages installed & run it with `node server.js`.
-Finally, you can access it through http://localhost:3000.
+Finally, you can access it through http://localhost:3000 (or any port defined as "PORT" in the environment).
 
 # How to use
 Enter your Client-ID and API-Key from skinport to the site and click the "Refresh info" button. 
